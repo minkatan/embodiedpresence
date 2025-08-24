@@ -15,8 +15,6 @@ type Instructor = {
   photoAlt?: string
 }
 
-type PageProps = { params: { slug: string } }
-
 /* -------- Static params for SSG (optional) -------- */
 export async function generateStaticParams() {
   const slugs: { slug: { current: string } }[] = await sanityClient.fetch(
@@ -26,8 +24,10 @@ export async function generateStaticParams() {
 }
 
 /* ----------------------------- Metadata ----------------------------- */
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = params
+export async function generateMetadata(
+  { params }: { params: Promise<{ slug: string }> }
+): Promise<Metadata> {
+  const { slug } = await params
   const base = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 
   const data: Instructor | null = await sanityClient.fetch(
@@ -75,8 +75,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 /* -------------------------------- Page -------------------------------- */
-export default async function InstructorDetail({ params }: PageProps) {
-  const { slug } = params
+export default async function InstructorDetail(
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  const { slug } = await params
 
   const person: (Instructor & { specialties: string[] }) | null =
     await sanityClient.fetch(
