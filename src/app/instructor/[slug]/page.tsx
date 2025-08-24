@@ -2,11 +2,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import type { Image as SanityImage } from 'sanity'
 import { sanityClient } from '@/lib/sanity.client'
 import { urlFor } from '@/lib/sanity.image'
-import type { Image as SanityImage } from 'sanity'
 
-type Params = { params: { slug: string } }
 type Instructor = {
   name: string
   role?: string
@@ -16,7 +15,9 @@ type Instructor = {
   photoAlt?: string
 }
 
-/* -------- Static params for build-time SSG (optional; fine to keep) -------- */
+type PageProps = { params: { slug: string } }
+
+/* -------- Static params for SSG (optional) -------- */
 export async function generateStaticParams() {
   const slugs: { slug: { current: string } }[] = await sanityClient.fetch(
     `*[_type=="instructor" && defined(slug.current)]{ slug }`
@@ -24,14 +25,16 @@ export async function generateStaticParams() {
   return slugs.map((s) => ({ slug: s.slug.current }))
 }
 
-/* ------------------------------- Metadata ---------------------------------- */
-export async function generateMetadata({ params }: Params): Promise<Metadata> {
+/* ----------------------------- Metadata ----------------------------- */
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = params
   const base = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+
   const data: Instructor | null = await sanityClient.fetch(
     `*[_type=="instructor" && slug.current==$slug][0]{
       name, role, bio, photo, "photoAlt": coalesce(photo.alt,name)
     }`,
-    { slug: params.slug }
+    { slug }
   )
 
   if (!data) {
@@ -48,17 +51,16 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
   const title = `${data.name} — Instructor`
   const description =
-    data.bio?.slice(0, 140) ||
-    `${data.role || 'Instructor'} at embodiedpresence`
+    data.bio?.slice(0, 140) || `${data.role || 'Instructor'} at embodiedpresence`
 
   return {
     title,
     description,
-    alternates: { canonical: `${base}/instructor/${params.slug}` },
+    alternates: { canonical: `${base}/instructor/${slug}` },
     openGraph: {
       title,
       description,
-      url: `${base}/instructor/${params.slug}`,
+      url: `${base}/instructor/${slug}`,
       type: 'profile',
       siteName: 'embodiedpresence',
       images: ogImg ? [{ url: ogImg, width: 1200, height: 630, alt: data.photoAlt || data.name }] : [],
@@ -72,14 +74,16 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   }
 }
 
-/* --------------------------------- Page ------------------------------------ */
-export default async function InstructorDetail({ params }: Params) {
+/* -------------------------------- Page -------------------------------- */
+export default async function InstructorDetail({ params }: PageProps) {
+  const { slug } = params
+
   const person: (Instructor & { specialties: string[] }) | null =
     await sanityClient.fetch(
       `*[_type=="instructor" && slug.current==$slug][0]{
         name, role, specialties, bio, photo, "photoAlt": coalesce(photo.alt,name)
       }`,
-      { slug: params.slug }
+      { slug }
     )
 
   if (!person) return notFound()
@@ -95,7 +99,7 @@ export default async function InstructorDetail({ params }: Params) {
     name: person.name,
     jobTitle: person.role || 'Instructor',
     description: person.bio || undefined,
-    url: `${base}/instructor/${params.slug}`,
+    url: `${base}/instructor/${slug}`,
     image: img,
   }
 
@@ -105,17 +109,11 @@ export default async function InstructorDetail({ params }: Params) {
       <nav aria-label="Breadcrumb" className="bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3">
           <ol className="flex items-center gap-2 text-sm text-stone-600">
-            <li>
-              <Link href="/" className="hover:underline">Home</Link>
-            </li>
+            <li><Link href="/" className="hover:underline">Home</Link></li>
             <li aria-hidden>›</li>
-            <li>
-              <Link href="/instructor" className="hover:underline">Instructors</Link>
-            </li>
+            <li><Link href="/instructor" className="hover:underline">Instructors</Link></li>
             <li aria-hidden>›</li>
-            <li className="text-stone-800 font-medium" aria-current="page">
-              {person.name}
-            </li>
+            <li className="text-stone-800 font-medium" aria-current="page">{person.name}</li>
           </ol>
         </div>
       </nav>
@@ -154,9 +152,7 @@ export default async function InstructorDetail({ params }: Params) {
               </ul>
             ) : null}
 
-            {person.bio && (
-              <p className="mt-6 text-stone-700 max-w-prose">{person.bio}</p>
-            )}
+            {person.bio && <p className="mt-6 text-stone-700 max-w-prose">{person.bio}</p>}
 
             <div className="mt-8">
               <Link
