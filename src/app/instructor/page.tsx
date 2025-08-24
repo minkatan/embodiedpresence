@@ -16,7 +16,7 @@ type Instructor = {
   role?: string
   specialties?: string[]
   slug?: { current: string }
-  photo?: SanityImage          // ✅ proper type instead of any
+  photo?: SanityImage
   photoAlt?: string
 }
 
@@ -29,8 +29,14 @@ async function getInstructors(): Promise<Instructor[]> {
   return sanityClient.fetch(query)
 }
 
+// type guard: only build a URL if the Sanity image has an asset
+function hasAsset(img: SanityImage | undefined): img is SanityImage & { asset: unknown } {
+  return !!img && 'asset' in img
+}
+
 export default async function InstructorPage() {
   const instructors = await getInstructors()
+
   return (
     <main className="min-h-screen">
       {/* HERO */}
@@ -66,11 +72,9 @@ export default async function InstructorPage() {
 }
 
 function InstructorCard({ person }: { person: Instructor }) {
-  // ✅ Build a safe image URL only if a valid Sanity image is present
-  const src =
-    person.photo && (person.photo as any)?.asset
-      ? urlFor(person.photo).width(800).height(1000).fit('crop').url()
-      : undefined
+  const src = hasAsset(person.photo)
+    ? urlFor(person.photo).width(800).height(1000).fit('crop').url()
+    : undefined
 
   const CardInner = (
     <article
@@ -98,7 +102,10 @@ function InstructorCard({ person }: { person: Instructor }) {
         {person.specialties?.length ? (
           <ul className="mt-3 flex flex-wrap gap-2">
             {person.specialties.map((s, i) => (
-              <li key={i} className="rounded-full border border-stone-300 bg-white px-3 py-1 text-xs">
+              <li
+                key={i}
+                className="rounded-full border border-stone-300 bg-white px-3 py-1 text-xs"
+              >
                 {s}
               </li>
             ))}

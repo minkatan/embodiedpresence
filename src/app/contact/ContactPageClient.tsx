@@ -247,8 +247,8 @@ export default function ContactPageClient() {
 
 /* tiny local component */
 function RadioPill({
-  label, value, active, onClick,
-}: { label: string; value: string; active: boolean; onClick: () => void }) {
+  label, active, onClick,
+}: { label: string; active: boolean; onClick: () => void }) {
   return (
     <button
       type="button"

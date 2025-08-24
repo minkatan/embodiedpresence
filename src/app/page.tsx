@@ -1,5 +1,5 @@
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -141,9 +141,9 @@ export default function Home() {
                 <a href="/contact" className="inline-flex w-fit items-center gap-2 rounded-xl bg-green-700 px-5 py-3 text-stone-50 font-medium shadow hover:bg-green-800">
                   Contact us
                 </a>
-                <a href="/instructor" className="inline-flex w-fit items-center gap-2 rounded-xl border border-stone-300 bg-white px-5 py-3 font-medium hover:border-stone-400">
+                <Link href="/instructor" className="inline-flex w-fit items-center gap-2 rounded-xl border border-stone-300 bg-white px-5 py-3 font-medium hover:border-stone-400">
                   Meet the teacher
-                </a>
+                </Link>
               </div>
             </div>
             <div className="rounded-2xl p-6 ring-1 ring-stone-200 bg-stone-50">
