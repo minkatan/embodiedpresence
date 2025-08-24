@@ -1,9 +1,10 @@
+// src/app/studio/login/page.tsx
 'use client'
 
+import { Suspense, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { useState } from 'react'
 
-export default function StudioLoginPage() {
+function LoginInner() {
   const searchParams = useSearchParams()
   const [show, setShow] = useState(false)
   const next = searchParams.get('next') || '/studio'
@@ -13,7 +14,7 @@ export default function StudioLoginPage() {
     <main className="min-h-screen grid place-items-center bg-stone-50 px-4">
       <form
         method="POST"
-        action="/api/studio-login"   // 👈 changed
+        action="/api/studio-login"
         className="w-full max-w-sm rounded-2xl border border-stone-200 bg-white p-6 shadow-sm"
       >
         <h1 className="text-xl font-semibold text-stone-900">Enter Studio password</h1>
@@ -29,12 +30,12 @@ export default function StudioLoginPage() {
               name="password"
               type={show ? 'text' : 'password'}
               placeholder="••••••••"
-              autoFocus
             />
             <button
               type="button"
               onClick={() => setShow((s) => !s)}
               className="rounded-r-xl px-3 text-sm text-stone-600 hover:text-stone-800"
+              aria-label={show ? 'Hide password' : 'Show password'}
             >
               {show ? 'Hide' : 'Show'}
             </button>
@@ -55,3 +56,14 @@ export default function StudioLoginPage() {
     </main>
   )
 }
+
+export default function StudioLoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginInner />
+    </Suspense>
+  )
+}
+
+// Optional: avoid pre-render assumptions
+export const dynamic = 'force-dynamic'
