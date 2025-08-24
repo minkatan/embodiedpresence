@@ -2,12 +2,11 @@
   "name": "embodiedpresence",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
-    "start": "next start",
-    "lint": "eslint"
-  },
+"scripts": {
+  "build": "next build",
+  "dev": "next dev",
+  "start": "next start"
+},
   "dependencies": {
     "@sanity/client": "^7.9.0",
     "@sanity/image-url": "^1.1.0",
