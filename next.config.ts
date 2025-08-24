@@ -1,16 +1,17 @@
 // next.config.ts
-const nextConfig = {
+import type { NextConfig } from 'next'
+
+const nextConfig: NextConfig = {
   images: {
     remotePatterns: [{ protocol: 'https', hostname: 'cdn.sanity.io' }],
   },
 
-  // 👇 make Turbopack/webpack transpile Sanity packages
-  transpilePackages: ['sanity', '@sanity/vision'],
+  // ✅ Externalize the heavy Sanity libs for the server runtime
+  serverExternalPackages: ['sanity', '@sanity/vision'],
 
-  // 👇 help the server components linker with ESM deps
-  experimental: {
-    serverComponentsExternalPackages: ['@sanity/client', 'sanity', '@sanity/vision'],
-  },
+  // ✅ Do NOT include 'sanity' or '@sanity/vision' here
+  // (optional) You can keep next-sanity if you want
+  transpilePackages: ['next-sanity'],
 }
 
 export default nextConfig
