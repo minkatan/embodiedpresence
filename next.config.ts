@@ -6,11 +6,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [{ protocol: 'https', hostname: 'cdn.sanity.io' }],
   },
 
-  // ✅ Externalize the heavy Sanity libs for the server runtime
+  // ✅ NEW (Next 15.5): use this, not the old `experimental.serverComponentsExternalPackages`
   serverExternalPackages: ['sanity', '@sanity/vision'],
 
-  // ✅ Do NOT include 'sanity' or '@sanity/vision' here
-  // (optional) You can keep next-sanity if you want
+  // ✅ Do NOT list 'sanity' or '@sanity/vision' here
+  // Keep helpers only (optional)
   transpilePackages: ['next-sanity'],
 }
 
