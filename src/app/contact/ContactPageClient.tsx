@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 
-/** ── 1) EDIT YOUR COPY HERE (paste from your HTML) ───────────────────────── */
+/** ── EDITABLE COPY ───────────────────────── */
 const content = {
   heroTitle: "Let’s get you moving",
   heroSubtitle:
@@ -13,8 +13,8 @@ const content = {
     "Send us a quick note and we’ll reply with available times. We can also hop on a short call if you like.",
   bullets: [
     "1:1 private sessions",
-    "Pain‑aware, evidence‑informed",
-    "Calm, nature‑tone studio",
+    "Pain-aware, evidence-informed",
+    "Calm, nature-tone studio",
   ],
   ctaSeePricing: "See pricing",
   consentText: "I agree to be contacted about my inquiry.",
@@ -22,13 +22,12 @@ const content = {
   errorText:
     "Please complete all required fields (valid email, message ≥ 5 chars, consent).",
 
-  // Optional quick contacts (uncomment if you want to show them)
-    phone: "+60 …",
-    email: "hello@embodiedpresence…",
-    address: "Street, City",
-    whatsapp: "https://wa.me/60xxxxxxxxx",
+  phone: "+60 …",
+  email: "hello@embodiedpresence…",
+  address: "Street, City",
+  whatsapp: "https://wa.me/60xxxxxxxxx",
 }
-/** ───────────────────────────────────────────────────────────────────────── */
+/** ───────────────────────────────────────── */
 
 type Status = 'idle' | 'sending' | 'ok' | 'error'
 
@@ -60,37 +59,10 @@ export default function ContactPageClient() {
       const json = await res.json()
       if (!res.ok || !json.ok) throw new Error(json.error || 'Bad response')
       setStatus('ok')
-      // optional: clear fields
-      // setName(''); setEmail(''); setPhone(''); setMessage('')
     } catch (err) {
       console.error(err)
       setStatus('error')
     }
-  }
-
-  if (status === 'ok') {
-    return (
-      <main className="min-h-screen">
-        <section className="py-16 bg-white">
-          <div className="mx-auto max-w-2xl px-4">
-            <h1 className="text-3xl font-semibold text-stone-900">
-              Thanks — message received!
-            </h1>
-            <p className="mt-2 text-stone-700">
-              We’ll reply within 1–2 business days. Check your inbox for a confirmation email.
-            </p>
-            <div className="mt-6">
-              <Link
-                href="/"
-                className="rounded-xl border border-stone-300 bg-white px-5 py-3 font-medium hover:border-stone-400"
-              >
-                Back to home
-              </Link>
-            </div>
-          </div>
-        </section>
-      </main>
-    )
   }
   
   return (
@@ -154,10 +126,10 @@ export default function ContactPageClient() {
                   <div className="sm:col-span-2">
                     <label className="block text-sm text-stone-600">I’m interested in</label>
                     <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                      <RadioPill label="Trial" value="trial" active={topic==='trial'} onClick={() => setTopic('trial')} />
-                      <RadioPill label="Pilates" value="pilates" active={topic==='pilates'} onClick={() => setTopic('pilates')} />
-                      <RadioPill label="Gyrotonic®" value="gyrotonic" active={topic==='gyrotonic'} onClick={() => setTopic('gyrotonic')} />
-                      <RadioPill label="Question" value="question" active={topic==='question'} onClick={() => setTopic('question')} />
+                      <RadioPill label="Trial" active={topic==='trial'} onClick={() => setTopic('trial')} />
+                      <RadioPill label="Pilates" active={topic==='pilates'} onClick={() => setTopic('pilates')} />
+                      <RadioPill label="Gyrotonic®" active={topic==='gyrotonic'} onClick={() => setTopic('gyrotonic')} />
+                      <RadioPill label="Question" active={topic==='question'} onClick={() => setTopic('question')} />
                     </div>
                   </div>
 
@@ -199,6 +171,9 @@ export default function ContactPageClient() {
                   {status === 'error' && (
                     <p className="text-sm text-red-600">{content.errorText}</p>
                   )}
+                  {status === 'ok' && (
+                    <p className="text-sm text-green-700">{content.successText}</p>
+                  )}
                 </div>
               </form>
             </div>
@@ -213,7 +188,6 @@ export default function ContactPageClient() {
                   <p className="mt-2 text-sm text-stone-700">{content.sidebarBody}</p>
                 )}
 
-                {/* Optional quick contacts */}
                 <ul className="mt-4 grid gap-2 text-sm text-stone-700">
                   {content.bullets.map((b, i) => (
                     <li key={i} className="flex items-center gap-2">
@@ -229,12 +203,6 @@ export default function ContactPageClient() {
                   >
                     {content.ctaSeePricing}
                   </Link>
-                  {/* Optional: show quick contact buttons if provided */}
-                  {/* {content.whatsapp && (
-                    <a href={content.whatsapp} target="_blank" className="inline-flex rounded-xl bg-green-700 px-4 py-2 text-sm font-medium text-white hover:bg-green-800">
-                      WhatsApp
-                    </a>
-                  )} */}
                 </div>
               </div>
             </aside>

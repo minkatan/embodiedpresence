@@ -1,7 +1,16 @@
-import imageUrlBuilder, { type SanityImageSource } from '@sanity/image-url'
+import imageUrlBuilder from '@sanity/image-url'
+import type { Image, ImageAsset, Reference } from 'sanity'
 import { sanityClient } from './sanity.client'
 
-// Re‑use your configured client so projectId/dataset are correct
+// A safe “source” union that covers common Sanity image shapes
+type SanityImageSource =
+  | Image
+  | ImageAsset
+  | Reference
+  | { _ref: string }
+  | { asset: { _ref: string } }
+  | { asset: { _id: string } }
+
 const builder = imageUrlBuilder(sanityClient)
 
 export function urlFor(source: SanityImageSource) {

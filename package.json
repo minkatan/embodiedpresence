@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": true,
 "scripts": {
-  "build": "next build",
-  "dev": "next dev",
-  "start": "next start"
-},
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
   "dependencies": {
     "@sanity/client": "^7.9.0",
     "@sanity/image-url": "^1.1.0",
